@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>Index page for FixRSS-MDBG app</title>
+</head>
+<body>
+Ensures unique (per day) URLs/IDs for the following feeds:<br>
+<table>
+<tr><th>Feed Key</th> <th>Feed URL</th> </tr>
+<% @data.each_key { |feed| %>
+<tr><td> <%= feed.to_s %> </td> <td> <a href="<%= @data[feed] %>"> <%= @data[feed] %> </a> </td> </tr>
+<% } %>
+</table>
+</body>
+</html>

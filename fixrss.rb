@@ -4,29 +4,50 @@ require 'sinatra'
 require 'rss'
 require 'open-uri'
 
-rss_feed = "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_1"
+feeds = { :hsk1 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_1",
+:hsk2 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_2",
+:hsk3 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_3",
+:hsk4 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_4",
+:hsk5 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_5",
+:hsk6 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_6"
+}
 
-# Variable for storing feed content
-rss_content = ""
+rss_content = {}
+rss = {}
 
-# Read the feed into rss_content
-open(rss_feed) do |f|
-   rss_content = f.read
-end
+feeds.each_key { |feed|
+	puts "Processing feed #{feed.to_s} - URL: #{feeds[feed]}"
+	# Variable for storing feed content
+	rss_content[feed] = ""
 
-# Parse the feed, dumping its contents to rss
-rss = RSS::Parser.parse(rss_content, false)
+	# Read the feed into rss_content
+	open(feeds[feed]) do |f|
+	   rss_content[feed] = f.read
+	end
 
-today = Time.new.strftime("%Y%m%d")
+	# Parse the feed, dumping its contents to rss
+	rss[feed] = RSS::Parser.parse(rss_content[feed], false)
 
-rss.entries.each { |ent|
-	ent.id.content = "#{ent.id.content}_#{today}"
+	today = Time.new.strftime("%Y%m%d")
+
+	rss[feed].entries.each { |ent|
+#		puts "Updating ent.id.content from |#{ent.id.content}|"
+		ent.id.content = "#{ent.id.content}_#{today}"
+#		puts "to |#{ent.id.content}|"
+#		puts "Updating ent.link from |#{ent.link}|"
+		ent.link.href[-1] = ent.link.href[-1] + "&ignore=#{today}"
+#		puts "to |#{ent.link}|"
+	}
 }
 
 get '/' do
-	"<html><head><title>Foo!</title></head><body>Test page!</body></html>"
+#	"<html><head><title>Foo!</title></head><body>Test page!</body></html>"
+	@data = feeds
+	erb :index
 end
 
-get '/rss.xml' do
-	rss.to_xml
+get '/:feed/rss.xml' do
+#	"<html><head><title>Foo!</title></head><body>Feed is #{params[:feed]}</body></html>"
+	
+	rss[params[:feed].to_sym].to_xml
 end

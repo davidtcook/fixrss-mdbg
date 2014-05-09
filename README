@@ -1,0 +1,22 @@
+
+A gross little hack / scratching an itch.
+
+The site MDBG.net provides RSS feeds for the 6 levels of HSK Chinese vocabulary lists.
+I tried to set up Twitter accounts for each vocab list through Twitterfeed.com,
+but found that the tweets soon stopped coming through.
+Investigated with Twitterfeed.com support, and found that the MDBG RSS feeds were
+repeating, with the same ID and link each time - Twitterfeed requires a unique ID/link
+each time to track what has already been posted.
+
+This app fills the gap - it reads the RSS feeds (once per day - conveniently, the free
+tier on Heroku restarts apps daily, so the feeds are re-read on startup), and modifies
+the links and IDs (by adding a datestamp), and then makes the modifed RSS feeds available.
+
+I re-pointed Twitterfeed to my app and the vocab lists now (sort-of) make it to Twitter.
+(sort-of, because only the first entry from each day's feed gets posted ...)
+
+
+... after typing the above, it occurs that I should just post directly to Twitter
+from my app, cut out the middle-feed.  On the other hand, there are 6 twitter accounts,
+so I'd have to figure out app authorisation 6 times over.  Hmmm ...
+

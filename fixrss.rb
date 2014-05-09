@@ -14,9 +14,11 @@ feeds = { :hsk1 => "http://www.mdbg.net/chindict/chindict_feed.php?feed=hsk_1",
 
 rss_content = {}
 rss = {}
+today = Time.new.strftime("%Y%m%d")
 
 feeds.each_key { |feed|
-	puts "Processing feed #{feed.to_s} - URL: #{feeds[feed]}"
+ts = Time.new.strftime("%Y%m%d:%H:%M:%S")
+	puts "#{ts}: Processing feed #{feed.to_s} - URL: #{feeds[feed]}"
 	# Variable for storing feed content
 	rss_content[feed] = ""
 
@@ -27,8 +29,6 @@ feeds.each_key { |feed|
 
 	# Parse the feed, dumping its contents to rss
 	rss[feed] = RSS::Parser.parse(rss_content[feed], false)
-
-	today = Time.new.strftime("%Y%m%d")
 
 	rss[feed].entries.each { |ent|
 #		puts "Updating ent.id.content from |#{ent.id.content}|"
